@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:spring/screens/users/notification_screen.dart';
 import 'package:spring/screens/users/transaction_history.dart';
+import 'package:spring/screens/vendor/payment_start_screen.dart';
 import 'package:spring/ui_utils.dart';
 import 'package:spring/widgets/transaction_tile.dart';
 import 'package:spring/widgets/wallettile.dart';
@@ -116,7 +117,16 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
                             Column(
                               children: [
                                 FloatingActionButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const PaymentStart(),
+                                      ),
+                                      (route) => true,
+                                    );
+                                  },
                                   backgroundColor: Colors.white,
                                   child: SvgPicture.asset(
                                     "assets/images/scan.svg",
