@@ -36,6 +36,8 @@ dependencies:
   animated_toggle_switch:
   flutter_svg:
   numeric_keyboard:
+  flutter_barcode_scanner: 
+  animated_check: 
 
 dev_dependencies:
   flutter_test:

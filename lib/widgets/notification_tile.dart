@@ -20,7 +20,7 @@ class _NotificationTileState extends State<NotificationTile> {
         width: width * 0.87,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.77),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Color(0x14000000),
               blurRadius: 10,
@@ -29,7 +29,7 @@ class _NotificationTileState extends State<NotificationTile> {
           ],
           color: Colors.white,
         ),
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(12),
         child: Column(
           children: [
             Align(
@@ -44,7 +44,7 @@ class _NotificationTileState extends State<NotificationTile> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Row(

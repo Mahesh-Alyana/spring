@@ -1,40 +1,20 @@
-import 'dart:async';
-
-import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:spring/screens/users/notification_screen.dart';
-import 'package:spring/screens/users/payment_details.dart';
-import 'package:spring/screens/users/payment_screen.dart';
-import 'package:spring/screens/users/profile_screen.dart';
-import 'package:spring/screens/users/settings_screen.dart';
 import 'package:spring/screens/users/transaction_history.dart';
 import 'package:spring/ui_utils.dart';
 import 'package:spring/widgets/transaction_tile.dart';
 import 'package:spring/widgets/wallettile.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class MerchantHomeScreen extends StatefulWidget {
+  const MerchantHomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<MerchantHomeScreen> createState() => _MerchantHomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  int value = 0;
-  Color color = UiUtils.light;
-  @override
-  void initState() {
-    Timer(Duration(seconds: 3), () {
-      setState(() {
-        color = UiUtils.dark;
-        value = 1;
-      });
-    });
-    // TODO: implement initState
-    super.initState();
-  }
-
+class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
+  int value = 1;
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -84,54 +64,45 @@ class _HomeScreenState extends State<HomeScreen> {
                                   )
                                 ],
                               ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Profile()),
-                                      (route) => true);
-                                },
-                                child: CircleAvatar(
-                                    child: Image.asset(
-                                        "assets/images/profile.png")),
-                              ),
+                              CircleAvatar(
+                                  child:
+                                      Image.asset("assets/images/profile.png")),
                             ],
                           ),
                         ),
                         SizedBox(
                           height: height * 0.05,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Wallet - ",
-                              style: TextStyle(
-                                color: UiUtils.dark,
-                                fontSize: 25,
-                                fontFamily: UiUtils.fontFamily,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 0.12,
-                              ),
-                            ),
-                            Container(
-                              width: 54,
-                              child: AnimatedToggleSwitch<int>.rolling(
-                                current: value,
-                                values: const [0, 1],
-                                onChanged: (i) => setState(() => value = i),
-                                borderWidth: 3,
-                                indicatorColor: Colors.white,
-                                innerColor:
-                                    value == 0 ? Colors.red : Colors.green,
-                                height: 30,
-                                dif: 5.0,
-                                borderColor: Colors.transparent,
-                              ),
-                            ),
-                          ],
-                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   children: [
+                        //     Text(
+                        //       "Wallet - ",
+                        //       style: TextStyle(
+                        //         color: UiUtils.dark,
+                        //         fontSize: 25,
+                        //         fontFamily: UiUtils.fontFamily,
+                        //         fontWeight: FontWeight.w800,
+                        //         letterSpacing: 0.12,
+                        //       ),
+                        //     ),
+                        //     Container(
+                        //       width: 54,
+                        //       child: AnimatedToggleSwitch<int>.rolling(
+                        //         current: value,
+                        //         values: const [0, 1],
+                        //         onChanged: (i) => setState(() => value = i),
+                        //         borderWidth: 3,
+                        //         indicatorColor: Colors.white,
+                        //         innerColor:
+                        //             value == 0 ? Colors.red : Colors.green,
+                        //         height: 30,
+                        //         dif: 5.0,
+                        //         borderColor: Colors.transparent,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                         SizedBox(
                           height: height * 0.02,
                         ),
@@ -145,60 +116,26 @@ class _HomeScreenState extends State<HomeScreen> {
                             Column(
                               children: [
                                 FloatingActionButton(
-                                  onPressed: () {
-                                    Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => PaymentScreen(),
-                                        ),
-                                        (route) => true);
-                                  },
-                                  backgroundColor: Colors.white,
-                                  child: SvgPicture.asset(
-                                    "assets/images/payment.svg",
-                                    width: 30,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(22)),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "Payment",
-                                    style: TextStyle(
-                                      color: UiUtils.text,
-                                      fontSize: 13,
-                                      fontFamily: UiUtils.fontFamily,
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 0.07,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Column(
-                              children: [
-                                FloatingActionButton(
                                   onPressed: () {},
                                   backgroundColor: Colors.white,
-                                  // child: SvgPicture.asset("assets/images/payment.svg"),
-                                  child: Center(
-                                    child: Icon(
-                                      Icons.add_circle_outline_rounded,
-                                      color: UiUtils.dark,
-                                      size: 30,
-                                    ),
+                                  child: SvgPicture.asset(
+                                    "assets/images/scan.svg",
+                                    color: UiUtils.dark,
                                   ),
+                                  // child: Center(
+                                  //   child: Icon(
+                                  //     Icons.add_circle_outline_rounded,
+                                  //     color: UiUtils.dark,
+                                  //     size: 30,
+                                  //   ),
+                                  // ),
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(22)),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    "Top up",
+                                    "Scan",
                                     style: TextStyle(
                                       color: UiUtils.text,
                                       fontSize: 13,
@@ -253,24 +190,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     );
                   }
-                  return GestureDetector(
-                      onTap: () {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TransactionDetails(),
-                            ),
-                            (route) => true);
-                      },
-                      child: TransactionTile());
+                  return TransactionTile();
                 }),
               ),
               // TransactionTile(),
               Expanded(
                 child: Align(
                   alignment: FractionalOffset.bottomCenter,
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 2000),
+                  child: Container(
                     height: height * 0.12,
                     width: width * 0.87,
                     decoration: BoxDecoration(
@@ -282,24 +209,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           offset: Offset(0, 8),
                         ),
                       ],
-                      color: color,
+                      color: UiUtils.dark,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SvgPicture.asset("assets/images/payment_on.svg"),
-                        GestureDetector(
-                            onTap: () {
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => TransactionHistory(),
-                                ),
-                                (route) => true,
-                              );
-                            },
-                            child: SvgPicture.asset(
-                                "assets/images/transaction_off.svg")),
+                        SvgPicture.asset("assets/images/transaction_off.svg"),
                         GestureDetector(
                           onTap: () {
                             Navigator.pushAndRemoveUntil(
@@ -311,21 +227,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           },
                           child: SvgPicture.asset(
-                            "assets/images/notification_off.svg",
+                            "assets/images/scan.svg",
                           ),
                         ),
-                        GestureDetector(
-                            onTap: () {
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SettingsScreen(),
-                                ),
-                                (route) => true,
-                              );
-                            },
-                            child: SvgPicture.asset(
-                                "assets/images/setting_off.svg"))
+                        SvgPicture.asset("assets/images/setting_off.svg")
                       ],
                     ),
                   ),

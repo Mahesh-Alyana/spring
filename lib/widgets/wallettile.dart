@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../ui_utils.dart';
@@ -10,6 +12,20 @@ class WalletTile extends StatefulWidget {
 }
 
 class _WalletTileState extends State<WalletTile> {
+  double size1 = 50;
+  double size2 = 10;
+  @override
+  void initState() {
+    Timer(Duration(milliseconds: 10), () {
+      setState(() {
+        size1 = 140;
+        size2 = 54;
+      });
+    });
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -18,8 +34,12 @@ class _WalletTileState extends State<WalletTile> {
       width: width * 0.8,
       height: height * 0.2,
       decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(color: Colors.black38, offset: Offset(0, 5), blurRadius: 5),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black38,
+            offset: Offset(0, 5),
+            blurRadius: 5,
+          ),
         ],
         borderRadius: BorderRadius.circular(50),
         color: UiUtils.medium,
@@ -30,9 +50,10 @@ class _WalletTileState extends State<WalletTile> {
           Positioned(
               top: -15,
               left: 10,
-              child: Container(
-                height: 54,
-                width: 54,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 2000),
+                height: size2,
+                width: size2,
                 decoration:
                     BoxDecoration(shape: BoxShape.circle, color: UiUtils.light),
               )),
@@ -40,8 +61,8 @@ class _WalletTileState extends State<WalletTile> {
             bottom: -55,
             right: -45,
             child: AnimatedContainer(
-              height: 140,
-              width: 140,
+              height: size1,
+              width: size1,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
@@ -49,7 +70,7 @@ class _WalletTileState extends State<WalletTile> {
                   color: const Color(0xff9038FF),
                 ),
               ),
-              duration: const Duration(milliseconds: 50),
+              duration: const Duration(milliseconds: 2000),
             ),
           ),
           // Positioned(

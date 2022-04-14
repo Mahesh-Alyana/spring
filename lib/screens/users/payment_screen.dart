@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:numeric_keyboard/numeric_keyboard.dart';
+import 'package:spring/screens/users/payment_success_screen.dart';
 import 'package:spring/ui_utils.dart';
 
 class PaymentScreen extends StatefulWidget {
@@ -146,7 +147,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       child: ClipRRect(
                           borderRadius: BorderRadius.circular(15),
                           child: MaterialButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PaymentStart(),
+                                  ),
+                                  (route) => false);
+                            },
                             child: Center(
                               child: Text(
                                 "Pay",
@@ -283,7 +291,14 @@ class _PaymentStartState extends State<PaymentStart> {
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TransactionComplete(),
+                              ),
+                              (route) => false);
+                        },
                         child: Center(
                           child: Text(
                             "Pay",

@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:spring/screens/users/home_screen.dart';
 import 'package:spring/ui_utils.dart';
 import 'package:flutter/src/painting/rounded_rectangle_border.dart';
 
@@ -192,19 +193,36 @@ class _TransactionDetailsState extends State<TransactionDetails> {
                           )))),
               Container(height: height / 10),
               Container(
-                child: Padding(
-                    padding: EdgeInsets.only(
-                        top: 20.00, bottom: 20, left: 50, right: 50),
-                    child: Text('Back',
-                        style: TextStyle(
-                            fontSize: 22,
+                width: width * 0.5,
+                height: height * 0.1,
+                decoration: BoxDecoration(
+                  color: UiUtils.medium,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: MaterialButton(
+                      onPressed: () {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomeScreen(),
+                            ),
+                            (route) => false);
+                      },
+                      child: Center(
+                        child: Text(
+                          "Back",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
                             fontFamily: UiUtils.fontFamily,
                             fontWeight: FontWeight.w700,
-                            letterSpacing: 0.07,
-                            color: Colors.white))),
-                decoration: BoxDecoration(
-                    color: Color.fromRGBO(91, 37, 159, 1),
-                    borderRadius: BorderRadius.circular(16.0)),
+                          ),
+                        ),
+                      ),
+                    )),
               ),
             ],
           ),

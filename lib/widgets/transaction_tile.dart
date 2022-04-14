@@ -36,7 +36,7 @@ class _TransactionTileState extends State<TransactionTile> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15), color: UiUtils.medium),
           ),
-          SizedBox(
+          const SizedBox(
             width: 5,
           ),
           Column(

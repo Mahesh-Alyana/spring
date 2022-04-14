@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spring/screens/users/payment_details.dart';
 import 'package:spring/ui_utils.dart';
 import 'package:spring/widgets/transaction_tile.dart';
 
@@ -87,7 +88,16 @@ class _TransactionHistoryState extends State<TransactionHistory> {
               SizedBox(
                 height: height * 0.7,
                 child: ListView.builder(itemBuilder: (context, index) {
-                  return TransactionTile();
+                  return GestureDetector(
+                      onTap: () {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TransactionDetails(),
+                            ),
+                            (route) => true);
+                      },
+                      child: TransactionTile());
                 }),
               ),
             ],
