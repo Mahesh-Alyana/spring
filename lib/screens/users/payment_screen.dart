@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:numeric_keyboard/numeric_keyboard.dart';
 import 'package:spring/ui_utils.dart';
 
-class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({Key? key}) : super(key: key);
+class PaymentStart extends StatefulWidget {
+  const PaymentStart({Key? key}) : super(key: key);
 
   @override
-  State<PaymentScreen> createState() => _PaymentScreenState();
+  State<PaymentStart> createState() => _PaymentStartState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
+class _PaymentStartState extends State<PaymentStart> {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
