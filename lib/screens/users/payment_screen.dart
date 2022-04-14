@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:numeric_keyboard/numeric_keyboard.dart';
-import 'package:spring/screens/users/payment_success_screen.dart';
+import 'package:spring/screens/vendor/payment_success_screen.dart';
 import 'package:spring/ui_utils.dart';
 
 class PaymentScreen extends StatefulWidget {

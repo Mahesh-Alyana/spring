@@ -13,6 +13,7 @@ class WalletTile extends StatefulWidget {
 
 class _WalletTileState extends State<WalletTile> {
   double size1 = 50;
+  double size = 200;
   double size2 = 10;
   @override
   void initState() {
@@ -20,6 +21,7 @@ class _WalletTileState extends State<WalletTile> {
       setState(() {
         size1 = 140;
         size2 = 54;
+        size = 320;
       });
     });
     // TODO: implement initState
@@ -30,8 +32,8 @@ class _WalletTileState extends State<WalletTile> {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-    return Container(
-      width: width * 0.8,
+    return AnimatedContainer(
+      width: size,
       height: height * 0.2,
       decoration: BoxDecoration(
         boxShadow: const [
@@ -44,6 +46,7 @@ class _WalletTileState extends State<WalletTile> {
         borderRadius: BorderRadius.circular(50),
         color: UiUtils.medium,
       ),
+      duration: Duration(milliseconds: 2500),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(50),
         child: Stack(children: [

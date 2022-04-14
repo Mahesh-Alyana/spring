@@ -5,11 +5,12 @@ import 'package:spring/screens/users/edit_profile_screen.dart';
 import 'package:spring/screens/users/home_screen.dart';
 import 'package:spring/screens/users/payment_details.dart';
 import 'package:spring/screens/users/payment_screen.dart';
-import 'package:spring/screens/users/payment_success_screen.dart';
+import 'package:spring/screens/vendor/payment_success_screen.dart';
 import 'package:spring/screens/users/profile_screen.dart';
 import 'package:spring/screens/users/settings_screen.dart';
 import 'package:spring/screens/users/transaction_history.dart';
 import 'package:spring/screens/vendor/home_screen.dart';
+import 'package:spring/screens/vendor/scan_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SettingsScreen(),
+      home: const MerchantHomeScreen(),
     );
   }
 }
