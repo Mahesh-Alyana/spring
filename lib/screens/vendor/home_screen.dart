@@ -107,7 +107,7 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
                         SizedBox(
                           height: height * 0.02,
                         ),
-                        WalletTile(),
+                        WalletTile(amount: "200"),
                         SizedBox(
                           height: height * 0.02,
                         ),

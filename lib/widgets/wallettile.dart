@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import '../ui_utils.dart';
 
 class WalletTile extends StatefulWidget {
-  const WalletTile({Key? key}) : super(key: key);
-
+  WalletTile({Key? key, required this.amount}) : super(key: key);
+  String amount;
   @override
   State<WalletTile> createState() => _WalletTileState();
 }
@@ -98,7 +98,7 @@ class _WalletTileState extends State<WalletTile> {
                   ),
                 ),
                 Text(
-                  "3000",
+                  "${widget.amount}",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,

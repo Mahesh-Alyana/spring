@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spring/screens/users/edit_profile_screen.dart';
 import 'package:spring/ui_utils.dart';
+
+import '../auth/login_screen.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -175,7 +178,16 @@ class _ProfileState extends State<Profile> {
                             ),
                             Container(height: height / 15),
                             FloatingActionButton(
-                              onPressed: () {},
+                              onPressed: () async {
+                                SharedPreferences sharedPreferences =
+                                    await SharedPreferences.getInstance();
+                                sharedPreferences.remove('token');
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginScreen()),
+                                    (route) => false);
+                              },
                               backgroundColor: Colors.white,
                               child: SvgPicture.asset(
                                 "assets/images/trash.svg",

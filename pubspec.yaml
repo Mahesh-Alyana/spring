@@ -38,6 +38,12 @@ dependencies:
   numeric_keyboard:
   flutter_barcode_scanner: 
   animated_check: 
+  http: 
+  shared_preferences: 
+  form_field_validator: 
+  open_mail_app: ^0.4.5
+  uni_links: ^0.5.1
+  provider: 
 
 dev_dependencies:
   flutter_test:
