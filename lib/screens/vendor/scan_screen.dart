@@ -127,13 +127,39 @@ class _ScanScreenState extends State<ScanScreen> {
     setState(() {
       _scanBarcode = barcodeScanRes;
     });
-    showDialog(
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var token = sharedPreferences.getString("token").toString();
+    print(token);
+
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data["id"] = _scanBarcode;
+    data["prize"] = widget.amount;
+    var request = await http.post(
+      Uri.parse("${ApiConfig.host}/student/transfer_money/"),
+      body: data,
+      headers: {
+        // "Content-Type":
+        //     "application/x-www-form-urlencoded",
+        "Accept": "application/json",
+        "Authorization": "JWT $token",
+      },
+    );
+    print(request.statusCode);
+    print(request.body);
+    if (request.statusCode == 200) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => TransactionComplete()),
+          (route) => false);
+    } else {
+      showDialog(
         context: context,
-        builder: (context) {
-          return Container(
-            child: Text(_scanBarcode),
-          );
-        });
+        builder: (context) => const AlertDialog(
+          content: Text("Transaction Failed"),
+        ),
+      );
+    }
   }
 
   @override

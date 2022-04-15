@@ -15,7 +15,7 @@ class ProfileDetails {
     );
     print(response.body);
     print(response.statusCode);
-    return response;
+    return response.body;
   }
 
   static userChecking() async {

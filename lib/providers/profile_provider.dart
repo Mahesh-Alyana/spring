@@ -16,9 +16,10 @@ class ProfileProvider extends ChangeNotifier {
   Future<void> getProductList() async {
     var response = await ProfileDetails.profile();
 
-    final responseData = json.decode(response.body);
+    final responseData = json.decode(response);
 
     ProfileEntity repo = ProfileEntity(
+      userId: responseData['first_name'],
       firstName: responseData['first_name'],
       lastName: responseData['last_name'],
       email: responseData['email'],

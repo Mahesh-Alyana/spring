@@ -14,6 +14,8 @@ import 'package:spring/ui_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../../models/payment_model.dart';
+
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({Key? key}) : super(key: key);
 
@@ -187,84 +189,33 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   var token = sharedPreferences
                                       .getString("token")
                                       .toString();
+                                  print(token);
 
-// for multipartrequest
-                                  // var request = http.MultipartRequest(
-                                  //     'POST',
-                                  //     Uri.parse(
-                                  //         '${ApiConfig.host}/student/transfer_money'));
-                                  // request.headers.addAll({
-                                  //   "Authorization": "Bearer $token",
-                                  //   "Content-Type":
-                                  //       "application/x-www-form-urlencoded"
-                                  // });
-                                  // Map<String, String> data = {
-                                  //   'id': userId.text,
-                                  //   'amount': "$amount",
-                                  // };
-                                  // request.fields.addAll(data);
-                                  // var response = await request.send();
-                                  // var responsed =
-                                  //     await http.Response.fromStream(response);
-                                  // // final responseData =
-                                  // //     json.decode(responsed.body);
-                                  // if (response.statusCode == 200) {
-                                  //   print("SUCCESS");
-                                  //   // print(responseData);
-                                  // } else {
-                                  //   print(response.statusCode);
-                                  //   print("ERROR");
-                                  // }
-                                  // var uri =
-                                  //     '${ApiConfig.host}/student/transfer_money';
-                                  // var formData = FormData.fromMap({
-                                  //   'id': userId.text,
-                                  //   'amount': 0,
-                                  // });
-                                  // Dio dio = Dio();
-                                  // var response = await dio.post(uri,
-                                  //     data: formData,
-                                  //     options: Options(headers: {
-                                  //       "Accept": "application/json",
-                                  //       "Authorization": "JWT $token",
-                                  //     }));
-                                  // print(response.data);
-                                  // print(response.statusCode);
-                                  // var request =
-                                  //     http.MultipartRequest('POST', uri);
-
-                                  // request.fields["id"] = userId.text;
-                                  // request.fields["prize"] = "$amount";
-                                  // request.headers.addAll(headers);
-                                  // var response = await request.send();
-                                  // if (response.statusCode == 200) {
-                                  //   Navigator.pushAndRemoveUntil(
-                                  //       context,
-                                  //       MaterialPageRoute(
-                                  //           builder: ((context) =>
-                                  //               TransactionComplete())),
-                                  //       (route) => false);
-                                  // } else {
-                                  //   print(response.statusCode);
-                                  //   print(response.request);
-                                  // }
                                   final Map<String, dynamic> data =
                                       new Map<String, dynamic>();
                                   data["id"] = "${userId.text}";
                                   data["prize"] = "${amount.text}";
                                   var request = await http.post(
                                     Uri.parse(
-                                        "${ApiConfig.host}/student/transfer_money"),
+                                        "${ApiConfig.host}/student/transfer_money/"),
                                     body: data,
                                     headers: {
-                                      "Content-Type":
-                                          "application/x-www-form-urlencoded",
+                                      // "Content-Type":
+                                      //     "application/x-www-form-urlencoded",
                                       "Accept": "application/json",
                                       "Authorization": "JWT $token",
                                     },
                                   );
                                   print(request.statusCode);
                                   print(request.body);
+                                  if (request.statusCode == 200) {
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const TransactionComplete()),
+                                        (route) => false);
+                                  }
                                 }
                               },
                               child: Center(
@@ -335,8 +286,8 @@ class _PaymentStartState extends State<PaymentStart> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     var options = {
-      'key': 'rzp_live_a4PzMufSL9ChFW',
-      'amount': int.parse("$amount") / 100,
+      'key': 'rzp_test_7JPoEZqhx1pXEh',
+      'amount': int.parse(amount),
       'name': name,
       'description': 'Process order',
       'retry': {'enabled': true, 'max_count': 2},
@@ -368,15 +319,16 @@ class _PaymentStartState extends State<PaymentStart> {
     print(response.orderId);
     print(response.signature);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var token = sharedPreferences.getString("token");
+    var token = sharedPreferences.getString("token").toString();
     var request = await http.post(
-        Uri.parse("${ApiConfig.host}/main/pay/success"),
+        Uri.parse("${ApiConfig.host}/student/pay/success/"),
         body: postdat,
         headers: {"Authorization": "JWT $token"});
+    print(request.statusCode);
     if (request.statusCode == 200) {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => TransactionComplete()),
+        MaterialPageRoute(builder: (context) => const TransactionComplete()),
         (route) => false,
       );
       setState(() {
@@ -494,8 +446,7 @@ class _PaymentStartState extends State<PaymentStart> {
                     textColor: UiUtils.dark,
                     rightButtonFn: () {
                       setState(() {
-                        amount =
-                            "$amount".substring(0, "$amount".length - 1) as int;
+                        amount = "$amount".substring(0, -1) as int;
                       });
                     },
                     rightIcon: Icon(
@@ -518,15 +469,37 @@ class _PaymentStartState extends State<PaymentStart> {
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(15),
                         child: MaterialButton(
-                          onPressed: () {
-                            openCheckout("", "$amount", "${profile.firstName}",
-                                "${profile.email}");
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => TransactionComplete(),
-                                ),
-                                (route) => false);
+                          onPressed: () async {
+                            SharedPreferences sharedPreferences =
+                                await SharedPreferences.getInstance();
+                            var token =
+                                sharedPreferences.getString("token").toString();
+                            print(token);
+                            final Map<String, dynamic> data =
+                                new Map<String, dynamic>();
+                            data["amount"] = "$amount";
+                            var request = await http.post(
+                              Uri.parse("${ApiConfig.host}/student/pay/"),
+                              body: data,
+                              headers: {
+                                "Accept": "application/json",
+                                "Authorization": "JWT $token",
+                              },
+                            );
+                            print(request.statusCode);
+                            print(request.body);
+                            if (request.statusCode == 200) {
+                              var responseData = json.decode(request.body);
+                              PaymentModel data = PaymentModel(
+                                  payment: responseData["payment"]);
+                              print(data.payment!.split("'"));
+                              var key = data.payment!.split("'")[3];
+                              print(key.split(","));
+                              var orderId = key.split(",")[0];
+                              print(orderId);
+                              openCheckout(orderId, "$amount",
+                                  "${profile.firstName}", "${profile.email}");
+                            }
                           },
                           child: Center(
                             child: Text(

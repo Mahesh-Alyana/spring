@@ -4,14 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:spring/models/profile_entity.dart';
 import 'package:spring/screens/auth/signup_screen.dart';
 import 'package:spring/screens/users/home_screen.dart';
 import 'package:spring/ui_utils.dart';
 
 import '../../api/api_service.dart';
+import '../../api/profileservices.dart';
 import '../../models/login_request_model.dart';
 import '../../models/login_response_model.dart';
 import 'package:http/http.dart' as http;
+
+import '../vendor/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -226,10 +230,18 @@ class _LoginScreenState extends State<LoginScreen> {
           await SharedPreferences.getInstance();
       sharedPreferences.setString("token", output['access']);
       print(output['access']);
+
+      var profile = json.decode(await ProfileDetails.profile());
+      ProfileEntity profileEntity =
+          ProfileEntity(typeOfAccount: profile['type_of_account']);
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
+          MaterialPageRoute(
+              builder: (context) => profileEntity.typeOfAccount == "STUDENT"
+                  ? HomeScreen()
+                  : MerchantHomeScreen()),
           (route) => false);
+
       return LoginResponseModel.fromJson(
         json.decode(response.body),
       );

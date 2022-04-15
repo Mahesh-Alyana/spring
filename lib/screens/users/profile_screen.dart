@@ -158,7 +158,7 @@ class _ProfileState extends State<Profile> {
                                 readOnly: true,
                                 decoration: InputDecoration(
                                   prefixIcon:
-                                      const Icon(Icons.person_outline_outlined),
+                                      const Icon(Icons.mail_outline_rounded),
                                   hintText: "Email",
                                   border: OutlineInputBorder(
                                     borderSide: BorderSide.none,
@@ -178,7 +178,8 @@ class _ProfileState extends State<Profile> {
                                 readOnly: true,
                                 initialValue: "${profile.amount}",
                                 decoration: InputDecoration(
-                                  prefixIcon: const Icon(Icons.mail),
+                                  prefixIcon:
+                                      const Icon(Icons.currency_rupee_rounded),
                                   hintText: "Amount",
                                   border: OutlineInputBorder(
                                     borderSide: BorderSide.none,

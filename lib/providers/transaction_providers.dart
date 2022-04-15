@@ -25,6 +25,7 @@ class TransactionListProvider extends ChangeNotifier {
     print(response.body);
     List<TransactionDetailsEntity> productList = [];
     final responseData = json.decode(response.body) as List;
+    print("ok");
 
     for (int i = 0; i < responseData.length; i++) {
       TransactionDetailsEntity repo = TransactionDetailsEntity(
@@ -37,6 +38,7 @@ class TransactionListProvider extends ChangeNotifier {
 
       productList.add(repo);
     }
+    print(productList);
 
     _productList = productList;
     notifyListeners();
@@ -54,13 +56,18 @@ class TransactionProvider extends ChangeNotifier {
   Future<void> getProductList(String id) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String token = sharedPreferences.getString('token').toString();
+    print(id);
     var response = await http.get(
-      Uri.parse('${ApiConfig.host}/student/transection/$id'),
+      Uri.parse('${ApiConfig.host}/student/transection/f2022-04-151/'),
       headers: {"Authorization": "JWT $token"},
     );
 
+    print(response.body);
+    print(response.statusCode);
+
     final responseData = json.decode(response.body);
     print(responseData);
+    print("ok");
 
     TransactionDetailsEntity repo = TransactionDetailsEntity(
       amount: responseData['amount'],
@@ -69,7 +76,6 @@ class TransactionProvider extends ChangeNotifier {
       transectionId: responseData['transaction_id'],
       modified: responseData['modified'],
     );
-
     _product = repo;
     notifyListeners();
   }

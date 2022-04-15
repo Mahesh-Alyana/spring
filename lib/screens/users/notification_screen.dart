@@ -20,7 +20,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       body: Center(
         child: SizedBox(
           width: width * 0.9,
-          height: height * 0.9,
+          height: height * 0.91,
           child: Column(
             children: [
               Align(
@@ -86,7 +86,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 ),
               ),
               SizedBox(
-                height: height * 0.7,
+                height: height * 0.8,
                 child: ListView.builder(itemBuilder: (context, index) {
                   return NotificationTile();
                 }),
