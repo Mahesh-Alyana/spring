@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -290,6 +292,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
               );
             });
       }
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Container(
+                child: Text("Check your mail to verify the account"),
+              ),
+            );
+          });
+      Timer(Duration(seconds: 2), () {});
       print(response);
       var result = await OpenMailApp.openMailApp(
         nativePickerTitle: 'Select email app to open',
