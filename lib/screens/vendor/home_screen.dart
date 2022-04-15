@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:spring/screens/users/notification_screen.dart';
+import 'package:spring/screens/users/profile_screen.dart';
+import 'package:spring/screens/users/settings_screen.dart';
 import 'package:spring/screens/users/transaction_history.dart';
 import 'package:spring/screens/vendor/payment_start_screen.dart';
 import 'package:spring/ui_utils.dart';
@@ -65,9 +67,17 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
                                   )
                                 ],
                               ),
-                              CircleAvatar(
+                              GestureDetector(
+                                onTap: () => Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Profile()),
+                                    (route) => true),
+                                child: CircleAvatar(
                                   child:
-                                      Image.asset("assets/images/profile.png")),
+                                      Image.asset("assets/images/profile.png"),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -227,13 +237,24 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SvgPicture.asset("assets/images/payment_on.svg"),
-                        SvgPicture.asset("assets/images/transaction_off.svg"),
+                        GestureDetector(
+                            onTap: () {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => TransactionHistory(),
+                                ),
+                                (route) => true,
+                              );
+                            },
+                            child: SvgPicture.asset(
+                                "assets/images/transaction_off.svg")),
                         GestureDetector(
                           onTap: () {
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => NotificationScreen(),
+                                builder: (context) => PaymentStart(),
                               ),
                               (route) => true,
                             );
@@ -242,7 +263,14 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
                             "assets/images/scan.svg",
                           ),
                         ),
-                        SvgPicture.asset("assets/images/setting_off.svg")
+                        GestureDetector(
+                            onTap: (() => Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SettingsScreen()),
+                                (route) => true)),
+                            child: SvgPicture.asset(
+                                "assets/images/setting_off.svg"))
                       ],
                     ),
                   ),

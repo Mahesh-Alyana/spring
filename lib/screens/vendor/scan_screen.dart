@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -150,13 +152,15 @@ class _ScanScreenState extends State<ScanScreen> {
     if (request.statusCode == 200) {
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => TransactionComplete()),
+          MaterialPageRoute(
+            builder: (context) => TransactionComplete(),
+          ),
           (route) => false);
     } else {
       showDialog(
         context: context,
-        builder: (context) => const AlertDialog(
-          content: Text("Transaction Failed"),
+        builder: (context) => AlertDialog(
+          content: Text(json.decode(request.body)['message']),
         ),
       );
     }

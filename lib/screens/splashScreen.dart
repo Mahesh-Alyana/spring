@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spring/api/auth_api.dart';
@@ -31,9 +32,21 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    );
     if (widget.task != '') {
       print("ok");
     }
@@ -68,6 +81,16 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return Scaffold(
+      body: Center(
+          child: RotationTransition(
+        turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
+        child: SvgPicture.asset(
+          "assets/images/logo.svg",
+          width: 400,
+          fit: BoxFit.fitWidth,
+        ),
+      )),
+    );
   }
 }

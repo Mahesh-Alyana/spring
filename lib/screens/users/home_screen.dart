@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   var _init = true;
   var _isLoading = false;
-
+  var bool = false;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -54,6 +54,9 @@ class _HomeScreenState extends State<HomeScreen> {
       Provider.of<ProfileProvider>(context).getProductList().then((value) {
         setState(() {
           _isLoading = false;
+          bool = Provider.of<ProfileProvider>(context, listen: false)
+              .profile
+              .card!;
           if (Provider.of<ProfileProvider>(context, listen: false)
                   .profile
                   .card ==
@@ -180,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         width: 54,
                                         child:
                                             AnimatedToggleSwitch<int>.rolling(
-                                          current: value,
+                                          current: bool ? 1 : 0,
                                           values: const [0, 1],
                                           onChanged: (i) async {
                                             setState(() => value = i);
@@ -200,12 +203,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     context,
                                                     listen: false)
                                                 .getProductList();
+                                            setState(() {
+                                              bool = !bool;
+                                            });
                                           },
                                           borderWidth: 3,
                                           indicatorColor: Colors.white,
-                                          innerColor: value == 0
-                                              ? Colors.red
-                                              : Colors.green,
+                                          innerColor:
+                                              bool ? Colors.green : Colors.red,
                                           height: 30,
                                           dif: 5.0,
                                           borderColor: Colors.transparent,

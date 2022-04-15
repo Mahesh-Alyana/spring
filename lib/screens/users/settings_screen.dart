@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spring/screens/users/profile_screen.dart';
 
 import '../../ui_utils.dart';
+import '../auth/login_screen.dart';
 import 'home_screen.dart';
 import 'notification_screen.dart';
 
@@ -278,7 +280,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 height: height * 0.12,
               ),
               FloatingActionButton(
-                onPressed: () {},
+                onPressed: () async {
+                  SharedPreferences sharedPreferences =
+                      await SharedPreferences.getInstance();
+                  sharedPreferences.remove('token');
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                      (route) => false);
+                },
                 backgroundColor: Colors.white,
                 child: SvgPicture.asset(
                   "assets/images/logout.svg",

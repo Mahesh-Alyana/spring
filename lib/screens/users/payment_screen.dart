@@ -215,6 +215,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                             builder: (context) =>
                                                 const TransactionComplete()),
                                         (route) => false);
+                                  } else {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            content: Text(json.decode(
+                                                request.body)["message"]),
+                                          );
+                                        });
                                   }
                                 }
                               },

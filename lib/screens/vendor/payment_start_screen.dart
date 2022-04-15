@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:numeric_keyboard/numeric_keyboard.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:spring/screens/vendor/scan_screen.dart';
 
 import '../../providers/profile_provider.dart';
 import '../../ui_utils.dart';
@@ -144,7 +145,14 @@ class _PaymentStartState extends State<PaymentStart> {
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(15),
                         child: MaterialButton(
-                          onPressed: () async {},
+                          onPressed: () async {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ScanScreen(amount: "$amount")),
+                                (route) => false);
+                          },
                           child: Center(
                             child: Text(
                               "Scan",
