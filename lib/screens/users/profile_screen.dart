@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spring/screens/users/edit_profile_screen.dart';
 import 'package:spring/ui_utils.dart';
 
+import '../../providers/profile_provider.dart';
 import '../auth/login_screen.dart';
 
 class Profile extends StatefulWidget {
@@ -14,8 +16,28 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  var _init = true;
+  var _isLoading = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_init) {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<ProfileProvider>(context).getProductList().then((value) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+    _init = false;
+  }
+
   @override
   Widget build(BuildContext context) {
+    var profile = Provider.of<ProfileProvider>(context).profile;
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     const double fontSize = 17;
@@ -114,13 +136,16 @@ class _ProfileState extends State<Profile> {
                                 height: width / 5,
                                 fit: BoxFit.fitWidth),
                             Container(height: 20),
-                            Text("Aditya",
-                                style: TextStyle(
-                                    fontSize: 24,
-                                    fontFamily: UiUtils.fontFamily,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 0.07,
-                                    color: Color.fromRGBO(19, 1, 56, 1))),
+                            Text(
+                              "${profile.firstName}",
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontFamily: UiUtils.fontFamily,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.07,
+                                color: Color.fromRGBO(19, 1, 56, 1),
+                              ),
+                            ),
                             Container(height: 10),
                             Container(
                               width: width * 0.9,
@@ -129,27 +154,11 @@ class _ProfileState extends State<Profile> {
                                 color: const Color(0xfff2f2f2),
                               ),
                               child: TextFormField(
+                                initialValue: profile.email,
+                                readOnly: true,
                                 decoration: InputDecoration(
                                   prefixIcon:
                                       const Icon(Icons.person_outline_outlined),
-                                  hintText: "Name",
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Container(height: 20),
-                            Container(
-                              width: width * 0.9,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: const Color(0xfff2f2f2),
-                              ),
-                              child: TextFormField(
-                                decoration: InputDecoration(
-                                  prefixIcon: const Icon(Icons.mail),
                                   hintText: "Email",
                                   border: OutlineInputBorder(
                                     borderSide: BorderSide.none,
@@ -166,6 +175,28 @@ class _ProfileState extends State<Profile> {
                                 color: const Color(0xfff2f2f2),
                               ),
                               child: TextFormField(
+                                readOnly: true,
+                                initialValue: "${profile.amount}",
+                                decoration: InputDecoration(
+                                  prefixIcon: const Icon(Icons.mail),
+                                  hintText: "Amount",
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(height: 20),
+                            Container(
+                              width: width * 0.9,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: const Color(0xfff2f2f2),
+                              ),
+                              child: TextFormField(
+                                readOnly: true,
+                                initialValue: profile.userId,
                                 decoration: InputDecoration(
                                   prefixIcon: const Icon(Icons.key),
                                   hintText: "ID",

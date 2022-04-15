@@ -1,17 +1,111 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:spring/screens/vendor/payment_success_screen.dart';
+import '../../api/api_service.dart';
 import '../../ui_utils.dart';
+import 'package:http/http.dart' as http;
 
 class ScanScreen extends StatefulWidget {
-  const ScanScreen({Key? key}) : super(key: key);
-
+  ScanScreen({Key? key, required this.amount}) : super(key: key);
+  String amount;
   @override
   State<ScanScreen> createState() => _ScanScreenState();
 }
 
 class _ScanScreenState extends State<ScanScreen> {
+  late Razorpay _razorpay = Razorpay();
+  @override
+  void initState() {
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    // TODO: implement initState
+    super.initState();
+  }
+
+  void openCheckout(
+      String orderID, String amount, String name, String email) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+    var options = {
+      'key': 'rzp_live_a4PzMufSL9ChFW',
+      'amount': int.parse(amount) / 100,
+      'name': name,
+      'description': 'Process order',
+      'retry': {'enabled': true, 'max_count': 2},
+      'send_sms_hash': true,
+      'prefill': {'contact': '', 'email': email},
+      'external': {
+        'wallets': ['paytm']
+      },
+      "order_id": orderID,
+      "theme.color": "#5B259F"
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint('Error: ${e}');
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    Fluttertoast.showToast(
+        msg: "Successfully completed", toastLength: Toast.LENGTH_SHORT);
+    var postdat = {
+      "razorpay_payment_id": response.paymentId,
+      "razorpay_order_id": response.orderId,
+      "razorpay_signature": response.signature
+    };
+    print(response.paymentId);
+    print(response.orderId);
+    print(response.signature);
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var token = sharedPreferences.getString("token");
+    var request = await http.post(
+        Uri.parse("${ApiConfig.host}/main/pay/success"),
+        body: postdat,
+        headers: {"Authorization": "JWT $token"});
+    if (request.statusCode == 200) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => TransactionComplete()),
+        (route) => false,
+      );
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  bool loading = false;
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Navigator.pop(context);
+    Fluttertoast.showToast(
+        msg: "Sorry an error occured,please try again",
+        toastLength: Toast.LENGTH_LONG);
+    print("ERROR: " + response.code.toString() + " - " + response.message!);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    Navigator.pop(context);
+    Fluttertoast.showToast(
+        msg: "EXTERNAL_WALLET: " + response.walletName!,
+        toastLength: Toast.LENGTH_SHORT);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
+  }
+
   String _scanBarcode = 'Unknown';
 
   Future<void> scanBarcodeNormal() async {

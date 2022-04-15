@@ -1,16 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:spring/providers/transaction_providers.dart';
 import 'package:spring/ui_utils.dart';
 
 class TransactionTile extends StatefulWidget {
-  const TransactionTile({Key? key}) : super(key: key);
-
+  TransactionTile({Key? key, required this.id}) : super(key: key);
+  String id;
   @override
   State<TransactionTile> createState() => _TransactionTileState();
 }
 
 class _TransactionTileState extends State<TransactionTile> {
+  var _init = true;
+  var _isLoading = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_init) {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<TransactionProvider>(context)
+          .getProductList(widget.id)
+          .then((value) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+    _init = false;
+  }
+
   @override
   Widget build(BuildContext context) {
+    var transaction = Provider.of<TransactionProvider>(context).product;
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     return Padding(
@@ -43,7 +67,7 @@ class _TransactionTileState extends State<TransactionTile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Canteen",
+                "${transaction.merchantName}",
                 style: TextStyle(
                   fontFamily: UiUtils.fontFamily,
                   color: Colors.black,
@@ -51,7 +75,7 @@ class _TransactionTileState extends State<TransactionTile> {
                 ),
               ),
               Text(
-                "Apr 8",
+                "${transaction.modified}",
                 style: TextStyle(
                   color: Color(0xffbdbdbd),
                   fontSize: 13,
@@ -66,7 +90,7 @@ class _TransactionTileState extends State<TransactionTile> {
               child: Align(
                   alignment: FractionalOffset.topRight,
                   child: Text(
-                    "60",
+                    "${transaction.amount}",
                     textAlign: TextAlign.right,
                     style: TextStyle(
                       color: Color(0xff363853),

@@ -109,6 +109,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       providers: [
         ChangeNotifierProvider.value(value: ProfileProvider()),
         ChangeNotifierProvider.value(value: TransactionListProvider()),
+        ChangeNotifierProvider.value(value: TransactionProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

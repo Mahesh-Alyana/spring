@@ -42,3 +42,35 @@ class TransactionListProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+class TransactionProvider extends ChangeNotifier {
+  // ignore: deprecated_member_use
+  late TransactionDetailsEntity _product = TransactionDetailsEntity();
+
+  TransactionDetailsEntity get product {
+    return _product;
+  }
+
+  Future<void> getProductList(String id) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String token = sharedPreferences.getString('token').toString();
+    var response = await http.get(
+      Uri.parse('${ApiConfig.host}/student/transection/$id'),
+      headers: {"Authorization": "JWT $token"},
+    );
+
+    final responseData = json.decode(response.body);
+    print(responseData);
+
+    TransactionDetailsEntity repo = TransactionDetailsEntity(
+      amount: responseData['amount'],
+      merchant: responseData['merchant'],
+      merchantName: responseData['merchant_name'],
+      transectionId: responseData['transaction_id'],
+      modified: responseData['modified'],
+    );
+
+    _product = repo;
+    notifyListeners();
+  }
+}

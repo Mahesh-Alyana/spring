@@ -4,6 +4,7 @@ import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spring/providers/profile_provider.dart';
 import 'package:spring/screens/users/notification_screen.dart';
 import 'package:spring/screens/users/payment_details.dart';
@@ -11,10 +12,12 @@ import 'package:spring/screens/users/payment_screen.dart';
 import 'package:spring/screens/users/profile_screen.dart';
 import 'package:spring/screens/users/settings_screen.dart';
 import 'package:spring/screens/users/transaction_history.dart';
+import 'package:http/http.dart' as http;
 import 'package:spring/ui_utils.dart';
 import 'package:spring/widgets/transaction_tile.dart';
 import 'package:spring/widgets/wallettile.dart';
 
+import '../../api/api_service.dart';
 import '../../providers/transaction_providers.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,7 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
     Timer(Duration(seconds: 3), () {
       setState(() {
         color = UiUtils.dark;
-        value = 1;
       });
     });
     // TODO: implement initState
@@ -52,9 +54,14 @@ class _HomeScreenState extends State<HomeScreen> {
       Provider.of<ProfileProvider>(context).getProductList().then((value) {
         setState(() {
           _isLoading = false;
-          value = Provider.of<ProfileProvider>(context).profile.card == true
-              ? 1
-              : 0;
+          if (Provider.of<ProfileProvider>(context, listen: false)
+                  .profile
+                  .card ==
+              true) {
+            value = 1;
+          } else {
+            value = 0;
+          }
         });
       });
       Provider.of<TransactionListProvider>(context)
@@ -92,7 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(
                       height: height * 0.81,
                       child: ListView.builder(
-                          itemCount: transactions.length + 1,
+                          itemCount: transactions.length > 3
+                              ? 4
+                              : transactions.length + 1,
                           itemBuilder: (context, index) {
                             if (index == 0) {
                               return Column(
@@ -117,18 +126,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 letterSpacing: 0.12,
                                               ),
                                             ),
-                                            Text(
-                                              profile.card == true
-                                                  ? "Active"
-                                                  : "Inactive",
-                                              style: TextStyle(
-                                                color: UiUtils.lightText,
-                                                fontSize: 16,
-                                                fontFamily: UiUtils.fontFamily,
-                                                fontWeight: FontWeight.w500,
-                                                letterSpacing: 0.08,
-                                              ),
-                                            )
+                                            StreamBuilder(
+                                                builder: ((context, snapshot) {
+                                              return Text(
+                                                profile.card == true
+                                                    ? "Active"
+                                                    : "Inactive",
+                                                style: TextStyle(
+                                                  color: UiUtils.lightText,
+                                                  fontSize: 16,
+                                                  fontFamily:
+                                                      UiUtils.fontFamily,
+                                                  fontWeight: FontWeight.w500,
+                                                  letterSpacing: 0.08,
+                                                ),
+                                              );
+                                            }))
                                           ],
                                         ),
                                         GestureDetector(
@@ -169,8 +182,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                             AnimatedToggleSwitch<int>.rolling(
                                           current: value,
                                           values: const [0, 1],
-                                          onChanged: (i) =>
-                                              setState(() => value = i),
+                                          onChanged: (i) async {
+                                            setState(() => value = i);
+                                            SharedPreferences
+                                                sharedPreferences =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            var token = sharedPreferences
+                                                .getString("token");
+                                            var request = await http.get(
+                                                Uri.parse(
+                                                    "${ApiConfig.host}/student/control_card/"),
+                                                headers: {
+                                                  "Authorization": "JWT $token"
+                                                });
+                                            Provider.of<ProfileProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .getProductList();
+                                          },
                                           borderWidth: 3,
                                           indicatorColor: Colors.white,
                                           innerColor: value == 0
@@ -237,7 +267,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                       Column(
                                         children: [
                                           FloatingActionButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.pushAndRemoveUntil(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const PaymentStart(),
+                                                  ),
+                                                  (route) => true);
+                                            },
                                             backgroundColor: Colors.white,
                                             // child: SvgPicture.asset("assets/images/payment.svg"),
                                             child: Center(
@@ -317,11 +355,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              TransactionDetails(),
+                                              TransactionDetails(
+                                            id: '${transactions[index - 1].transectionId}',
+                                          ),
                                         ),
                                         (route) => true);
                                   },
-                                  child: TransactionTile());
+                                  child: TransactionTile(
+                                    id: "${transactions[index - 1].transectionId}",
+                                  ));
                             }
                           }),
                     ),

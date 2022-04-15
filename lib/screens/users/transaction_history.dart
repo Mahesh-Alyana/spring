@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:spring/screens/users/payment_details.dart';
 import 'package:spring/ui_utils.dart';
 import 'package:spring/widgets/transaction_tile.dart';
+
+import '../../providers/transaction_providers.dart';
 
 class TransactionHistory extends StatefulWidget {
   const TransactionHistory({Key? key}) : super(key: key);
@@ -11,8 +14,32 @@ class TransactionHistory extends StatefulWidget {
 }
 
 class _TransactionHistoryState extends State<TransactionHistory> {
+  var _init = true;
+  var _isLoading = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_init) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      Provider.of<TransactionListProvider>(context)
+          .getProductList()
+          .then((value) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+    _init = false;
+  }
+
   @override
   Widget build(BuildContext context) {
+    var transactions =
+        Provider.of<TransactionListProvider>(context).productList;
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -87,18 +114,24 @@ class _TransactionHistoryState extends State<TransactionHistory> {
               ),
               SizedBox(
                 height: height * 0.7,
-                child: ListView.builder(itemBuilder: (context, index) {
-                  return GestureDetector(
-                      onTap: () {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TransactionDetails(),
-                            ),
-                            (route) => true);
-                      },
-                      child: TransactionTile());
-                }),
+                child: ListView.builder(
+                    itemCount: transactions.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                          onTap: () {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => TransactionDetails(
+                                    id: "${transactions[index].transectionId}",
+                                  ),
+                                ),
+                                (route) => true);
+                          },
+                          child: TransactionTile(
+                            id: '',
+                          ));
+                    }),
               ),
             ],
           ),

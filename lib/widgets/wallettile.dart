@@ -46,7 +46,7 @@ class _WalletTileState extends State<WalletTile> {
         borderRadius: BorderRadius.circular(50),
         color: UiUtils.medium,
       ),
-      duration: Duration(milliseconds: 2500),
+      duration: Duration(milliseconds: 1500),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(50),
         child: Stack(children: [

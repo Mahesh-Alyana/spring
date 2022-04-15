@@ -200,7 +200,9 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
                       ],
                     );
                   }
-                  return TransactionTile();
+                  return TransactionTile(
+                    id: '',
+                  );
                 }),
               ),
               // TransactionTile(),

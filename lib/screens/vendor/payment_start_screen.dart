@@ -13,6 +13,7 @@ class PaymentStart extends StatefulWidget {
 }
 
 class _PaymentStartState extends State<PaymentStart> {
+  int amount = 0;
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -46,7 +47,7 @@ class _PaymentStartState extends State<PaymentStart> {
                   ),
                 ),
                 Text(
-                  "45",
+                  "$amount",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: UiUtils.dark,
@@ -91,12 +92,17 @@ class _PaymentStartState extends State<PaymentStart> {
                   height: height * 0.06,
                 ),
                 NumericKeyboard(
-                  onKeyboardTap: (val) {},
+                  onKeyboardTap: (val) {
+                    setState(() {
+                      amount = int.parse("$amount" + val);
+                    });
+                  },
                   textColor: UiUtils.dark,
                   rightButtonFn: () {
-                    // setState(() {
-                    //   text = text.substring(0, text.length - 1);
-                    // });
+                    setState(() {
+                      amount =
+                          "$amount".substring(0, "$amount".length - 1) as int;
+                    });
                   },
                   rightIcon: Icon(
                     Icons.cancel_outlined,
@@ -116,29 +122,32 @@ class _PaymentStartState extends State<PaymentStart> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: MaterialButton(
-                        onPressed: () {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ScanScreen(),
+                    borderRadius: BorderRadius.circular(15),
+                    child: MaterialButton(
+                      onPressed: () {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ScanScreen(
+                                amount: "$amount",
                               ),
-                              (route) => false);
-                        },
-                        child: Center(
-                          child: Text(
-                            "Pay",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontFamily: UiUtils.fontFamily,
-                              fontWeight: FontWeight.w700,
                             ),
+                            (route) => false);
+                      },
+                      child: Center(
+                        child: Text(
+                          "Pay",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontFamily: UiUtils.fontFamily,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                      )),
+                      ),
+                    ),
+                  ),
                 )
               ],
             ),
