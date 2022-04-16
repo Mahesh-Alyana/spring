@@ -32,21 +32,9 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 2000),
-      vsync: this,
-    );
     if (widget.task != '') {
       print("ok");
     }
@@ -83,13 +71,10 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-          child: RotationTransition(
-        turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
-        child: SvgPicture.asset(
-          "assets/images/logo.svg",
-          width: 400,
-          fit: BoxFit.fitWidth,
-        ),
+          child: SvgPicture.asset(
+        "assets/images/logo.svg",
+        width: 400,
+        fit: BoxFit.fitWidth,
       )),
     );
   }
