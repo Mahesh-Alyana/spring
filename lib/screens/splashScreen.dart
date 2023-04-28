@@ -20,14 +20,7 @@ String? finalToken;
 class SplashScreen extends StatefulWidget {
   SplashScreen({
     Key? key,
-    required this.task,
-    required this.uid,
-    required this.token,
   }) : super(key: key);
-  String task;
-  String uid;
-  String token;
-
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -35,10 +28,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    if (widget.task != '') {
-      print("ok");
-    }
-    // verify(deepLinkURL);
+    
     getToken().whenComplete(() async {
       var profile = json.decode(await ProfileDetails.profile());
       ProfileEntity profileEntity =

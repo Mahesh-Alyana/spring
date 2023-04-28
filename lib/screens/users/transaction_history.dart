@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spring/screens/users/payment_details.dart';
@@ -112,27 +114,43 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                   ),
                 ),
               ),
-              SizedBox(
-                height: height * 0.7,
-                child: ListView.builder(
-                    itemCount: transactions.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                          onTap: () {
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => TransactionDetails(
-                                    id: "${transactions[index].transectionId}",
-                                  ),
-                                ),
-                                (route) => true);
-                          },
-                          child: TransactionTile(
-                            id: '',
-                          ));
-                    }),
-              ),
+              StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection("users")
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .collection("transactions")
+                      .snapshots(),
+                  builder: (context, transactionSnapshot) {
+                    return !transactionSnapshot.hasData
+                        ? Center(
+                            child: CircularProgressIndicator(
+                                color: UiUtils.medium),
+                          )
+                        : SizedBox(
+                            height: height * 0.7,
+                            child: ListView.builder(
+                                itemCount: transactions.length,
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                      onTap: () {
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TransactionDetails(
+                                                id: transactionSnapshot
+                                                    .data!.docs[index],
+                                              ),
+                                            ),
+                                            (route) => true);
+                                      },
+                                      child: TransactionTile(
+                                        id: transactionSnapshot
+                                            .data!.docs[index],
+                                      ));
+                                }),
+                          );
+                  }),
             ],
           ),
         ),

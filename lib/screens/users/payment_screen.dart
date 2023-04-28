@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:numeric_keyboard/numeric_keyboard.dart';
@@ -252,32 +254,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
 }
 
 class PaymentStart extends StatefulWidget {
-  const PaymentStart({Key? key}) : super(key: key);
-
+   PaymentStart({Key? key,required this.amount}) : super(key: key);
+  double amount;
   @override
   State<PaymentStart> createState() => _PaymentStartState();
 }
 
 class _PaymentStartState extends State<PaymentStart> {
-  var _init = true;
-  var _isLoading = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_init) {
-      setState(() {
-        _isLoading = true;
-      });
-      Provider.of<ProfileProvider>(context).getProductList().then((_) {
-        setState(() {
-          _isLoading = false;
-        });
-      });
-    }
-    _init = false;
-  }
-
   int amount = 0;
   late Razorpay _razorpay = Razorpay();
   @override
@@ -327,23 +310,20 @@ class _PaymentStartState extends State<PaymentStart> {
     print(response.paymentId);
     print(response.orderId);
     print(response.signature);
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var token = sharedPreferences.getString("token").toString();
-    var request = await http.post(
-        Uri.parse("${ApiConfig.host}/student/pay/success/"),
-        body: postdat,
-        headers: {"Authorization": "JWT $token"});
-    print(request.statusCode);
-    if (request.statusCode == 200) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const TransactionComplete()),
-        (route) => false,
-      );
-      setState(() {
-        loading = false;
-      });
-    }
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+          "amount" : widget.amount+amount
+        });
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const TransactionComplete()),
+      (route) => false,
+    );
+    setState(() {
+      loading = false;
+    });
   }
 
   bool loading = false;

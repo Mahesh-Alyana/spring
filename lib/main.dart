@@ -32,61 +32,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  String task = '';
-  String uid = '';
-  String token = '';
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    print(state);
-    super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.resumed) {
-      initialLink().then(
-        (value) => {
-          deepLinkURL = value,
-          verify(deepLinkURL),
-          task = value.split('/')[3]
-        },
-      );
-
-      print(deepLinkURL);
-    }
-  }
-
-  Future<String> initialLink() async {
-    try {
-      final initialLink = await getInitialLink();
-      return initialLink!;
-    } on PlatformException {
-      final initialLink = await getInitialLink();
-      return initialLink!;
-    }
-  }
-
-  Future<Null> verify(String link) async {
-    var spl = link.split('/');
-    print(spl);
-    print(spl[spl.length - 1]);
-    print(spl[spl.length - 2]);
-    print(spl[3]);
-    setState(() {
-      task = spl[3];
-      token = spl[spl.length - 1];
-      uid = spl[spl.length - 2];
-    });
-    AuthApiConfig.activation(uid, token);
-  }
-
   String deepLinkURL = '';
   @override
   void initState() {
-    initialLink().then(
-      (value) => {
-        deepLinkURL = value,
-        verify(deepLinkURL),
-      },
-    );
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
@@ -98,7 +48,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       DeviceOrientation.portraitUp,
       // DeviceOrientation.portraitDown,
     ]);
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -117,11 +67,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: SplashScreen(
-          task: task,
-          token: token,
-          uid: uid,
-        ),
+        home: SplashScreen(),
       ),
     );
   }

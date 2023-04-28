@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -7,6 +9,7 @@ import 'package:open_mail_app/open_mail_app.dart';
 import 'package:spring/screens/auth/login_screen.dart';
 import '../../api/auth_api.dart';
 import '../../ui_utils.dart';
+import '../splashScreen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -18,6 +21,7 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController _nameTC = TextEditingController();
+  TextEditingController _rollNumberTC = TextEditingController();
   TextEditingController _emailTC = TextEditingController();
   TextEditingController _passwordTC = TextEditingController();
   TextEditingController _repasswordTC = TextEditingController();
@@ -205,13 +209,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         ),
                                       );
                                     });
-                                await createUserSignup(
-                                  _emailTC.text,
-                                  _passwordTC.text,
-                                  _repasswordTC.text,
-                                  _nameTC.text,
-                                  "name",
-                                );
+                                FirebaseAuth.instance
+                                    .createUserWithEmailAndPassword(
+                                        email: _emailTC.text,
+                                        password: _passwordTC.text)
+                                    .then((value) {
+                                  FirebaseFirestore.instance
+                                      .collection("users")
+                                      .doc(FirebaseAuth
+                                          .instance.currentUser!.uid)
+                                      .set({
+                                    "name": _nameTC.text,
+                                    "id": _rollNumberTC.text,
+                                    "email": _emailTC.text,
+                                    "amount": 0,
+                                    "merchant": false,
+                                    "active": true
+                                  });
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SplashScreen()),
+                                      (route) => false);
+                                  Navigator.pop(context);
+                                });
                               }
                             },
                             child: Center(
@@ -274,74 +295,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ))
         ],
       ),
-    );
-  }
-
-  Future<void> createUserSignup(String email, String password,
-      String confirmPassword, String firstName, String lastName) async {
-    print("start");
-    final response = await AuthApiConfig.signUp(
-        email, password, confirmPassword, firstName, lastName);
-    if (response != null) {
-      if (response == '400') {
-        showDialog(
-            context: context,
-            builder: (context) {
-              return Container(
-                child: Text("Email is already avaliable"),
-              );
-            });
-      }
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              content: Container(
-                child: Text("Check your mail to verify the account"),
-              ),
-            );
-          });
-      Timer(Duration(seconds: 2), () {});
-      print(response);
-      var result = await OpenMailApp.openMailApp(
-        nativePickerTitle: 'Select email app to open',
-      );
-
-      if (!result.didOpen && !result.canOpen) {
-        showNoMailAppsDialog(context);
-      } else if (!result.didOpen && result.canOpen) {
-        showDialog(
-          context: context,
-          builder: (_) {
-            return MailAppPickerDialog(
-              mailApps: result.options,
-            );
-          },
-        );
-      }
-      SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
-      // Navigator.push(
-      //     context, MaterialPageRoute(builder: (context) => LoginScreen()));
-    }
-  }
-
-  void showNoMailAppsDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("Open Mail App"),
-          content: Text("No mail apps installed"),
-          actions: <Widget>[
-            TextButton(
-              child: Text("OK"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            )
-          ],
-        );
-      },
     );
   }
 }

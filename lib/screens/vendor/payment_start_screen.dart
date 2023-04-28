@@ -15,30 +15,12 @@ class PaymentStart extends StatefulWidget {
 }
 
 class _PaymentStartState extends State<PaymentStart> {
-  var _init = true;
-  var _isLoading = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_init) {
-      setState(() {
-        _isLoading = true;
-      });
-      Provider.of<ProfileProvider>(context).getProductList().then((_) {
-        setState(() {
-          _isLoading = false;
-        });
-      });
-    }
-    _init = false;
-  }
+  
 
   int amount = 0;
 
   @override
   Widget build(BuildContext context) {
-    var profile = Provider.of<ProfileProvider>(context).profile;
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     return Scaffold(

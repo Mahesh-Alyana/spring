@@ -1,11 +1,15 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spring/models/profile_entity.dart';
+import 'package:spring/models/profile_model.dart';
 import 'package:spring/screens/auth/signup_screen.dart';
+import 'package:spring/screens/splashScreen.dart';
 import 'package:spring/screens/users/home_screen.dart';
 import 'package:spring/ui_utils.dart';
 
@@ -149,7 +153,41 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       );
                                     });
-                                await login(email, password);
+                                FirebaseAuth.instance
+                                    .signInWithEmailAndPassword(
+                                        email: email, password: password)
+                                    .then((value) async {
+                                  final modelRef = FirebaseFirestore.instance
+                                      .collection("users")
+                                      .doc(FirebaseAuth
+                                          .instance.currentUser!.uid)
+                                      .withConverter<ProfileModel>(
+                                        fromFirestore: (snapshot, _) =>
+                                            ProfileModel.fromJson(
+                                                snapshot.data()!),
+                                        toFirestore: (model, _) =>
+                                            model.toJson(),
+                                      );
+
+                                  // Writes now take a Model as parameter instead of a Map
+                                  await modelRef.set(ProfileModel());
+
+                                  // Reads now return a Model instead of a Map
+                                  final ProfileModel? model = await modelRef
+                                      .get()
+                                      .then((s) => s.data());
+                                  SharedPreferences sharedPreferences =
+                                      await SharedPreferences.getInstance();
+                                  sharedPreferences.setBool(
+                                      "admin", model!.merchant!);
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => SplashScreen(),
+                                      ),
+                                      (route) => false);
+                                  Navigator.pop(context);
+                                });
                               }
                             },
                             child: Center(
@@ -213,59 +251,5 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     );
-  }
-
-  Future<LoginResponseModel> login(String email, String password) async {
-    String url = "${ApiConfig.host}/auth/jwt/create/";
-    LoginRequestModel requestModel =
-        LoginRequestModel(email: email, password: password);
-    final response = await http.post(Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(requestModel.toJson()));
-    if (response.statusCode == 200 || response.statusCode == 400) {
-      Map<String, dynamic> output = json.decode(response.body);
-      SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
-      sharedPreferences.setString("token", output['access']);
-      print(output['access']);
-
-      var profile = json.decode(await ProfileDetails.profile());
-      ProfileEntity profileEntity =
-          ProfileEntity(typeOfAccount: profile['type_of_account']);
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => profileEntity.typeOfAccount == "STUDENT"
-                  ? HomeScreen()
-                  : MerchantHomeScreen()),
-          (route) => false);
-
-      return LoginResponseModel.fromJson(
-        json.decode(response.body),
-      );
-    } else {
-      Navigator.pop(context);
-      showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              content: Text(
-                json.decode(response.body)["detail"],
-              ),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      // Navigator.pop(context);
-                      Navigator.pop(context);
-                    },
-                    child: Text("Ok"))
-              ],
-            );
-          });
-      throw Exception('Failed to load data!');
-    }
   }
 }
