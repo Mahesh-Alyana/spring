@@ -31,6 +31,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   final TextEditingController _emailTC = TextEditingController();
+  final TextEditingController _rollNumber = TextEditingController();
   final TextEditingController _passwordTC = TextEditingController();
 
   @override
@@ -70,6 +71,39 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Color(0xfff2f2f2),
                       ),
                       child: TextFormField(
+                        controller: _rollNumber,
+                        validator: (val) {
+                          MultiValidator([
+                            RequiredValidator(
+                                errorText: "roll number is required to login"),
+                           
+                          ]);
+                        },
+                        decoration: InputDecoration(
+                          // prefixIcon: SvgPicture.asset(
+                          //   "assets/images/username.svg",
+                          //   height: 3,
+                          //   width: 5,
+                          // ),
+                          prefixIcon: Icon(Icons.person_outline_rounded),
+                          hintText: "Roll Number",
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: height * 0.02,
+                    ),
+                    Container(
+                      width: width * 0.9,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Color(0xfff2f2f2),
+                      ),
+                      child: TextFormField(
                         controller: _emailTC,
                         validator: (val) {
                           MultiValidator([
@@ -87,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           //   width: 5,
                           // ),
                           prefixIcon: Icon(Icons.person_outline_rounded),
-                          hintText: "Username",
+                          hintText: "Email ID",
                           border: OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.circular(15),
@@ -159,8 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     .then((value) async {
                                   final modelRef = FirebaseFirestore.instance
                                       .collection("users")
-                                      .doc(FirebaseAuth
-                                          .instance.currentUser!.uid)
+                                      .doc(_rollNumber.text)
                                       .withConverter<ProfileModel>(
                                         fromFirestore: (snapshot, _) =>
                                             ProfileModel.fromJson(
@@ -180,6 +213,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       await SharedPreferences.getInstance();
                                   sharedPreferences.setBool(
                                       "admin", model!.merchant!);
+                                      sharedPreferences.setString(
+                                      "id", _rollNumber.text);
                                   Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(

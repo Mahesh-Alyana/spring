@@ -45,6 +45,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var id = "";
+    void setID() async {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      id = sharedPreferences.getString("id")!;
+    }
+
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -52,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection("users")
-              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .doc(id)
               .collection("transactions")
               .snapshots(),
           builder: (context, transactionSnapshot) {
@@ -82,8 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     return StreamBuilder<DocumentSnapshot>(
                                         stream: FirebaseFirestore.instance
                                             .collection("users")
-                                            .doc(FirebaseAuth
-                                                .instance.currentUser!.uid)
+                                            .doc(id)
                                             .snapshots(),
                                         builder: (context, userDataSnapshot) {
                                           return Column(

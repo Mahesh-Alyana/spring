@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -254,7 +253,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 }
 
 class PaymentStart extends StatefulWidget {
-   PaymentStart({Key? key,required this.amount}) : super(key: key);
+  PaymentStart({Key? key, required this.amount}) : super(key: key);
   double amount;
   @override
   State<PaymentStart> createState() => _PaymentStartState();
@@ -310,12 +309,12 @@ class _PaymentStartState extends State<PaymentStart> {
     print(response.paymentId);
     print(response.orderId);
     print(response.signature);
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String id = sharedPreferences.getString("id")!;
     FirebaseFirestore.instance
         .collection("users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .update({
-          "amount" : widget.amount+amount
-        });
+        .doc(id)
+        .update({"amount": widget.amount + amount});
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const TransactionComplete()),

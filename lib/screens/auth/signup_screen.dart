@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:open_mail_app/open_mail_app.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spring/screens/auth/login_screen.dart';
 import '../../api/auth_api.dart';
 import '../../ui_utils.dart';
@@ -213,11 +213,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     .createUserWithEmailAndPassword(
                                         email: _emailTC.text,
                                         password: _passwordTC.text)
-                                    .then((value) {
+                                    .then((value) async {
+                                  SharedPreferences sharedPreferences =
+                                      await SharedPreferences.getInstance();
+                                  sharedPreferences.setString(
+                                      "id", _rollNumberTC.text);
                                   FirebaseFirestore.instance
                                       .collection("users")
-                                      .doc(FirebaseAuth
-                                          .instance.currentUser!.uid)
+                                      .doc(_rollNumberTC.text)
                                       .set({
                                     "name": _nameTC.text,
                                     "id": _rollNumberTC.text,

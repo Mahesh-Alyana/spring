@@ -28,19 +28,18 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    
     getToken().whenComplete(() async {
-      var profile = json.decode(await ProfileDetails.profile());
-      ProfileEntity profileEntity =
-          ProfileEntity(typeOfAccount: profile['type_of_account']);
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      bool? merchant = sharedPreferences.getBool("admin");
       Timer(
         const Duration(seconds: 2),
         () => Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (context) => finalToken == null
+                builder: (context) => merchant == null
                     ? LoginScreen()
-                    : profileEntity.typeOfAccount == "STUDENT"
+                    : merchant
                         ? HomeScreen()
                         : MerchantHomeScreen()),
             (route) => false),
@@ -51,10 +50,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future getToken() async {
-    final SharedPreferences sharedPreferences =
-        await SharedPreferences.getInstance();
-    var obtainedToken = sharedPreferences.getString("token");
-    finalToken = obtainedToken;
+    // final SharedPreferences sharedPreferences =
+    //     await SharedPreferences.getInstance();
+    // var obtainedToken = sharedPreferences.getString("token");
+    // finalToken = obtainedToken;
   }
 
   @override
